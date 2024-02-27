@@ -1,0 +1,33 @@
+[tool.poetry]
+name = "agent-promptior"
+version = "0.1.0"
+description = ""
+authors = ["Abhigael"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = ">=3.10,<3.13"
+langchain = "^0.1.9"
+langchain-community = "^0.0.24"
+langchainhub = "^0.1.14"
+langchain-openai = "^0.0.7"
+html2text = "^2024.2.25"
+python-dotenv = "^1.0.1"
+langchain-pinecone = "^0.0.3"
+pinecone-client = "^3.1.0"
+cohere = "^4.51"
+langsmith = "^0.1.9"
+redis = "^5.0.1"
+lxml = "^5.1.0"
+lark = "^1.1.9"
+bs4 = "^0.0.2"
+playwright = "^1.41.2"
+beautifulsoup4 = "^4.12.3"
+pydantic = "<2"
+
+[tool.poetry.group.dev.dependencies]
+langchain-cli = ">=0.0.21"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
