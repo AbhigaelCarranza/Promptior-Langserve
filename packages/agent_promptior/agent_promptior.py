@@ -24,12 +24,6 @@ from langchain_core.messages import AIMessage, FunctionMessage, HumanMessage
 from langchain_core.prompts import ChatPromptTemplate
 from langchain.prompts import MessagesPlaceholder
 
-from langchain_core.runnables import (
-    ConfigurableField,
-    ConfigurableFieldSpec,
-    Runnable,
-    RunnableConfig,
-)
 
 load_dotenv(find_dotenv())
 
@@ -56,7 +50,7 @@ class PromptiorAgent():
         self.retriever = self.document_loader_and_retriever()
         self.rerank = self.rerank_retriever()
         self.tools = [self.create_retriever_tool(self.retriever)]
-        self.redis_url = "redis://:kf46Oua6cs9cGNCbrsrUz36fio9nnpM2@redis-19832.c267.us-east-1-4.ec2.cloud.redislabs.com:19832/0"
+        self.redis_url = os.environ["REDIS_URL"]
         self.agent = self.create_agent()
         
         
@@ -133,7 +127,7 @@ class PromptiorAgent():
         agent_executor = AgentExecutor(agent=agent, tools=self.tools)
         return agent_executor
 
-    def evaluation_agent(self, dataset_name="testing-promptior", project_name="test-virtual-razor-8"):
+    def evaluation_agent(self, dataset_name="testing-promptior", project_name="test"):
         eval_config = RunEvalConfig(
             evaluators=[
                 "cot_qa"
