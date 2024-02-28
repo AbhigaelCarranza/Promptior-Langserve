@@ -12,7 +12,8 @@ channel = "stable-23_05"
 language = "python3"
 
 [deployment]
-run = ["sh", "-c", "langserve serve"]
+# run = ["sh", "-c", "langserve serve"]
+run = ["langchain", "serve","--host","0.0.0.0"]
 deploymentTarget = "cloudrun"
 
 [[ports]]
