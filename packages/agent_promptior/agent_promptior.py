@@ -17,13 +17,19 @@ from WebScraper.webscraper import WebScraper
 import langsmith
 import os
 
-from langserve.pydantic_v1 import BaseModel
-from typing import Any, AsyncIterator
+from langserve.pydantic_v1 import BaseModel, Field
+from typing import Any, AsyncIterator, Optional, cast, Dict, List, Tuple
 
 from langchain_core.messages import AIMessage, FunctionMessage, HumanMessage
 from langchain_core.prompts import ChatPromptTemplate
 from langchain.prompts import MessagesPlaceholder
 
+from langchain_core.runnables import (
+    ConfigurableField,
+    ConfigurableFieldSpec,
+    Runnable,
+    RunnableConfig,
+)
 
 load_dotenv(find_dotenv())
 
@@ -95,7 +101,6 @@ class PromptiorAgent():
         return docs
     
     def rerank_retriever(self):
-        # llm = Cohere(temperature=0)
         compressor = CohereRerank(top_n=4)
         compression_retriever = ContextualCompressionRetriever(
             base_compressor=compressor, base_retriever=self.retriever
@@ -114,7 +119,7 @@ class PromptiorAgent():
             [
                 (
                     "system",
-                    "You are very powerful assistant."
+                    "You are a very powerful assistant, from the company Promptior.ai, I want you to only answer questions based on the context that is returned to you."
                     "Talk with the user as normal. "
                 ),
                 MessagesPlaceholder(variable_name="chat_history"),
@@ -157,30 +162,6 @@ class PromptiorAgent():
             self.get_message_history,
             input_messages_key="input",
             history_messages_key="chat_history",
-        ).with_types(input_type=Input, output_type=Output).with_config({"run_name": "agent"})
+        ).with_types(input_type=Input)
 
-        # response = agent_with_chat_history.invoke(
-        #     {"input": input["input"]},
-        #     config={"configurable": {"session_id": input["session_id"]}},
-        # )
-        
         return agent_with_chat_history
-        # return response["output"]
-    
-    
-    async def custom_stream(self, input: Input) -> AsyncIterator[str]:
-        agent_executor = self.run()
-        async for event in agent_executor.astream_events(
-            {
-                "input": input["input"],
-            },
-            config={"configurable": {"session_id": input["session_id"]}},
-            version="v1",
-        ):
-            kind = event["event"]
-
-            if kind == "on_chat_model_stream":
-                content = event["data"]["chunk"].content
-                if content:
-                    yield content
-    
